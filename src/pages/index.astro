@@ -1,0 +1,60 @@
+---
+import 'github-markdown-css/github-markdown.css';
+import { marked } from 'marked';
+
+// Fetch Markdown content from the specified URL
+const mdUrl = import.meta.env.MD_URL || 'https://assets-cdn.zvlz.my.id/cloudstream.md';
+let markdownContent = '';
+
+try {
+  const response = await fetch(mdUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch markdown: ${response.status} ${response.statusText}`);
+  }
+  markdownContent = await response.text();
+} catch (error) {
+  console.error(error);
+  markdownContent = '> Failed to load content. Please check the URL or try again later.';
+}
+
+const htmlContent = await marked.parse(markdownContent);
+---
+
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<title>stream-zvlz</title>
+		<style>
+			.markdown-wrapper {
+				box-sizing: border-box;
+				min-width: 200px;
+				max-width: 980px;
+				margin: 0 auto;
+				padding: 45px;
+			}
+			/* Set a background color that looks good behind the dark/light markdown body */
+			body {
+				margin: 0;
+			}
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #0d1117;
+				}
+			}
+			@media (max-width: 767px) {
+				.markdown-wrapper {
+					padding: 15px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="markdown-wrapper">
+			<article class="markdown-body" set:html={htmlContent} />
+		</main>
+	</body>
+</html>

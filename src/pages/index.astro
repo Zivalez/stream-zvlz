@@ -154,6 +154,11 @@ const htmlContent = await marked.parse(markdownContent);
 			.download-btn:active {
 				background-color: #1a7f37;
 			}
+			.shields-badge {
+				height: 32px !important;
+				margin: 12px 0 !important;
+				border: none !important;
+			}
 		</style>
 	</head>
 	<body>
@@ -201,10 +206,15 @@ const htmlContent = await marked.parse(markdownContent);
 				// Convert download links to buttons
 				const allLinks = document.querySelectorAll('.markdown-body a');
 				allLinks.forEach((link) => {
-					if (link.href && link.href.match(/\.apk$/i)) {
-						link.className = 'download-btn';
-						link.textContent = 'Download CloudStream';
-					}
+				if (link.href && link.href.toLowerCase().endsWith('.apk')) {
+					const fileSize = "62MB"; // Ganti sesuai ukuran APK kamu
+					link.outerHTML = `
+					<a href="${link.href}" target="_blank" rel="noopener noreferrer" class="cursor-pointer">
+					<img src="https://img.shields.io/badge/Download-CloudStream_${fileSize}-blue?style=for-the-badge&logo=android&logoColor=white" 
+						alt="Download CloudStream APK (${fileSize})" class="shields-badge">
+					</a>
+					`;
+				}
 				});
 
 				preBlocks.forEach((pre) => {

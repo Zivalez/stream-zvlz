@@ -41,12 +41,12 @@ const htmlContent = await marked.parse(markdownContent);
 		<meta name="generator" content={Astro.generator} />
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 		<title>stream-zvlz</title>
 		<style>
 			:root {
 				--font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-				--font-geist-mono: 'Geist Mono', ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+				--font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
 			}
 			.markdown-wrapper {
 				box-sizing: border-box;
@@ -60,7 +60,12 @@ const htmlContent = await marked.parse(markdownContent);
 				margin: 0;
 			}
 			.markdown-body {
-				font-family: var(--font-geist-mono) !important;
+				font-family: var(--font-inter) !important;
+			}
+			.markdown-body code,
+			.markdown-body pre,
+			.markdown-body tt {
+				font-family: var(--font-mono) !important;
 			}
 			@media (prefers-color-scheme: dark) {
 				body {

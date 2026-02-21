@@ -74,6 +74,9 @@ const htmlContent = await marked.parse(markdownContent);
 				.markdown-wrapper {
 					padding: 15px;
 				}
+				.markdown-body {
+					font-size: 14px !important;
+				}
 			}
 			.code-wrapper {
 				position: relative;
@@ -129,6 +132,28 @@ const htmlContent = await marked.parse(markdownContent);
 					max-width: 100% !important;
 				}
 			}
+			/* Download Button */
+			.download-btn {
+				display: inline-block;
+				padding: 12px 24px;
+				font-size: 16px;
+				font-weight: 600;
+				font-family: var(--font-inter) !important;
+				color: #ffffff;
+				background-color: #238636;
+				border: 1px solid rgba(240, 246, 252, 0.1);
+				border-radius: 6px;
+				text-decoration: none !important;
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+			.download-btn:hover {
+				background-color: #2ea043;
+				text-decoration: none !important;
+			}
+			.download-btn:active {
+				background-color: #1a7f37;
+			}
 		</style>
 	</head>
 	<body>
@@ -172,6 +197,16 @@ const htmlContent = await marked.parse(markdownContent);
 					}
 				});
 				const preBlocks = document.querySelectorAll('.markdown-body pre');
+
+				// Convert download links to buttons
+				const allLinks = document.querySelectorAll('.markdown-body a');
+				allLinks.forEach((link) => {
+					if (link.href && link.href.match(/\.apk$/i)) {
+						link.className = 'download-btn';
+						link.textContent = 'Download CloudStream';
+					}
+				});
+
 				preBlocks.forEach((pre) => {
 					const wrapper = document.createElement('div');
 					wrapper.className = 'code-wrapper';

@@ -110,6 +110,24 @@ const htmlContent = await marked.parse(markdownContent);
 				color: #3fb950;
 				border-color: #3fb950;
 			}
+			/* Screenshot Gallery */
+			.screenshot-gallery {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 16px;
+				margin-top: 16px;
+				margin-bottom: 16px;
+			}
+			.screenshot-gallery img {
+				width: 100%;
+				border-radius: 6px;
+				border: 1px solid var(--color-border-default, #30363d);
+			}
+			@media (max-width: 600px) {
+				.screenshot-gallery {
+					grid-template-columns: 1fr;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -119,6 +137,29 @@ const htmlContent = await marked.parse(markdownContent);
 
 		<script is:inline>
 			document.addEventListener('DOMContentLoaded', () => {
+				// Inject screenshots after "CloudStream's Key Features" section
+				const headings = document.querySelectorAll('.markdown-body h1, .markdown-body h2, .markdown-body h3');
+				headings.forEach((heading) => {
+					if (heading.textContent.trim().includes("CloudStream's Key Features")) {
+						// Find the last element before the next heading of same or higher level
+						const level = parseInt(heading.tagName[1]);
+						let lastEl = heading;
+						let sibling = heading.nextElementSibling;
+						while (sibling) {
+							const tag = sibling.tagName;
+							if (/^H[1-6]$/.test(tag) && parseInt(tag[1]) <= level) break;
+							lastEl = sibling;
+							sibling = sibling.nextElementSibling;
+						}
+						const gallery = document.createElement('div');
+						gallery.className = 'screenshot-gallery';
+						gallery.innerHTML =
+							'<img src="https://public-assets.zvlz.my.id/cloudstream/ss1.avif" alt="CloudStream Screenshot 1" loading="lazy">' +
+							'<img src="https://public-assets.zvlz.my.id/cloudstream/ss2.avif" alt="CloudStream Screenshot 2" loading="lazy">';
+						lastEl.after(gallery);
+					}
+				});
+
 				const preBlocks = document.querySelectorAll('.markdown-body pre');
 				
 				preBlocks.forEach((pre) => {

@@ -2,12 +2,10 @@
 import 'github-markdown-css/github-markdown.css';
 import { marked } from 'marked';
 
-// Prevent Cloudflare from caching the HTML, ensuring instant updates
 Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 Astro.response.headers.set('Pragma', 'no-cache');
 Astro.response.headers.set('Expires', '0');
 
-// Fetch Markdown content from the specified URL
 const mdUrl = import.meta.env.MD_URL || 'https://assets-cdn.zvlz.my.id/cloudstream.md';
 let markdownContent = '';
 
@@ -77,7 +75,6 @@ const htmlContent = await marked.parse(markdownContent);
 					padding: 15px;
 				}
 			}
-			/* Copy Button Styles */
 			.code-wrapper {
 				position: relative;
 				margin-bottom: 16px;
@@ -110,22 +107,26 @@ const htmlContent = await marked.parse(markdownContent);
 				color: #3fb950;
 				border-color: #3fb950;
 			}
-			/* Screenshot Gallery */
 			.screenshot-gallery {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 16px;
-				margin-top: 16px;
-				margin-bottom: 16px;
+				display: grid !important;
+				grid-template-columns: repeat(2, 1fr) !important;
+				gap: 16px !important;
+				margin: 24px auto !important;
+				max-width: 600px !important;
 			}
 			.screenshot-gallery img {
-				width: 100%;
-				border-radius: 6px;
-				border: 1px solid var(--color-border-default, #30363d);
+				width: 100% !important;
+				height: auto !important;
+				aspect-ratio: 9 / 21 !important;
+				object-fit: cover !important;
+				border-radius: 12px !important;
+				border: 1px solid var(--color-border-default, #30363d) !important;
+				display: block !important;
 			}
-			@media (max-width: 600px) {
+			@media (max-width: 768px) {
 				.screenshot-gallery {
-					grid-template-columns: 1fr;
+					grid-template-columns: 1fr !important;
+					max-width: 100% !important;
 				}
 			}
 		</style>
@@ -137,58 +138,56 @@ const htmlContent = await marked.parse(markdownContent);
 
 		<script is:inline>
 			document.addEventListener('DOMContentLoaded', () => {
-				// Inject screenshots after "CloudStream's Key Features" section
 				const headings = document.querySelectorAll('.markdown-body h1, .markdown-body h2, .markdown-body h3');
 				headings.forEach((heading) => {
-					if (heading.textContent.trim().includes("CloudStream's Key Features")) {
-						// Find the last element before the next heading of same or higher level
-						const level = parseInt(heading.tagName[1]);
-						let lastEl = heading;
-						let sibling = heading.nextElementSibling;
-						while (sibling) {
-							const tag = sibling.tagName;
-							if (/^H[1-6]$/.test(tag) && parseInt(tag[1]) <= level) break;
-							lastEl = sibling;
-							sibling = sibling.nextElementSibling;
-						}
-						const gallery = document.createElement('div');
-						gallery.className = 'screenshot-gallery';
-						gallery.innerHTML =
-							'<img src="https://public-assets.zvlz.my.id/cloudstream/ss1.avif" alt="CloudStream Screenshot 1" loading="lazy">' +
-							'<img src="https://public-assets.zvlz.my.id/cloudstream/ss2.avif" alt="CloudStream Screenshot 2" loading="lazy">';
-						lastEl.after(gallery);
+					if (heading.textContent.trim().includes("Fitur Utama CloudStream")) {
+					const level = parseInt(heading.tagName[1]);
+					let lastEl = heading;
+					let sibling = heading.nextElementSibling;
+					while (sibling) {
+						const tag = sibling.tagName;
+						if (/^H[1-6]$/.test(tag) && parseInt(tag[1]) <= level) break;
+						lastEl = sibling;
+						sibling = sibling.nextElementSibling;
+					}
+					
+					const gallery = document.createElement('div');
+					gallery.className = 'screenshot-gallery';
+					gallery.style.cssText = `
+						display: grid !important;
+						grid-template-columns: repeat(2, 1fr) !important;
+						gap: 16px !important;
+						max-width: 600px !important;
+						margin: 24px auto !important;
+					`;
+					gallery.innerHTML = `
+					<img src="https://public-assets.zvlz.my.id/cloudstream/ss1.avif" 
+						alt="Screenshot 1" loading="lazy" 
+						style="width:100%; height:auto; aspect-ratio:9/21; object-fit:cover; border-radius:12px; border:1px solid #30363d;">
+					<img src="https://public-assets.zvlz.my.id/cloudstream/ss2.avif" 
+						alt="Screenshot 2" loading="lazy" 
+						style="width:100%; height:auto; aspect-ratio:9/21; object-fit:cover; border-radius:12px; border:1px solid #30363d;">
+					`;
+					lastEl.after(gallery);
 					}
 				});
-
 				const preBlocks = document.querySelectorAll('.markdown-body pre');
-				
 				preBlocks.forEach((pre) => {
-					// Create wrapper
 					const wrapper = document.createElement('div');
 					wrapper.className = 'code-wrapper';
-					
-					// Insert wrapper and move pre inside
 					pre.parentNode.insertBefore(wrapper, pre);
 					wrapper.appendChild(pre);
-					
-					// Create copy button
 					const button = document.createElement('button');
 					button.className = 'copy-button';
 					button.textContent = 'Copy';
-					
-					// Get the code element inside the pre block
 					const code = pre.querySelector('code');
-					
 					button.addEventListener('click', async () => {
 						try {
 							const textToCopy = code ? code.innerText : pre.innerText;
 							await navigator.clipboard.writeText(textToCopy);
-							
-							// Visual feedback
 							const originalText = button.textContent;
 							button.textContent = 'Copied!';
 							button.classList.add('copied');
-							
 							setTimeout(() => {
 								button.textContent = originalText;
 								button.classList.remove('copied');

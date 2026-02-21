@@ -62,11 +62,76 @@ const htmlContent = await marked.parse(markdownContent);
 					padding: 15px;
 				}
 			}
+			/* Copy Button Styles */
+			.markdown-body pre {
+				position: relative;
+			}
+			.copy-button {
+				position: absolute;
+				top: 8px;
+				right: 8px;
+				padding: 5px 8px;
+				font-size: 12px;
+				color: var(--color-fg-muted, #8b949e);
+				background-color: var(--color-canvas-subtle, #161b22);
+				border: 1px solid var(--color-border-default, #30363d);
+				border-radius: 6px;
+				cursor: pointer;
+				opacity: 0;
+				transition: opacity 0.2s, background-color 0.2s;
+			}
+			.markdown-body pre:hover .copy-button {
+				opacity: 1;
+			}
+			.copy-button:hover {
+				background-color: var(--color-btn-hover-bg, #30363d);
+			}
+			.copy-button.copied {
+				color: #3fb950;
+				border-color: #3fb950;
+			}
 		</style>
 	</head>
 	<body>
 		<main class="markdown-wrapper">
 			<article class="markdown-body" set:html={htmlContent} />
 		</main>
+
+		<script is:inline>
+			document.addEventListener('DOMContentLoaded', () => {
+				const preBlocks = document.querySelectorAll('.markdown-body pre');
+				
+				preBlocks.forEach((pre) => {
+					// Create copy button
+					const button = document.createElement('button');
+					button.className = 'copy-button';
+					button.textContent = 'Copy';
+					
+					// Get the code element inside the pre block
+					const code = pre.querySelector('code');
+					
+					button.addEventListener('click', async () => {
+						try {
+							const textToCopy = code ? code.innerText : pre.innerText;
+							await navigator.clipboard.writeText(textToCopy);
+							
+							// Visual feedback
+							const originalText = button.textContent;
+							button.textContent = 'Copied!';
+							button.classList.add('copied');
+							
+							setTimeout(() => {
+								button.textContent = originalText;
+								button.classList.remove('copied');
+							}, 2000);
+						} catch (err) {
+							console.error('Failed to copy text: ', err);
+						}
+					});
+					
+					pre.appendChild(button);
+				});
+			});
+		</script>
 	</body>
 </html>

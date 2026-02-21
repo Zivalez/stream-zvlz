@@ -39,8 +39,15 @@ const htmlContent = await marked.parse(markdownContent);
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 		<title>stream-zvlz</title>
 		<style>
+			:root {
+				--font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+				--font-geist-mono: 'Geist Mono', ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+			}
 			.markdown-wrapper {
 				box-sizing: border-box;
 				min-width: 200px;
@@ -51,6 +58,14 @@ const htmlContent = await marked.parse(markdownContent);
 			/* Set a background color that looks good behind the dark/light markdown body */
 			body {
 				margin: 0;
+			}
+			.markdown-body {
+				font-family: var(--font-inter) !important;
+			}
+			.markdown-body code,
+			.markdown-body pre,
+			.markdown-body tt {
+				font-family: var(--font-geist-mono) !important;
 			}
 			@media (prefers-color-scheme: dark) {
 				body {
@@ -63,8 +78,12 @@ const htmlContent = await marked.parse(markdownContent);
 				}
 			}
 			/* Copy Button Styles */
-			.markdown-body pre {
+			.code-wrapper {
 				position: relative;
+				margin-bottom: 16px;
+			}
+			.code-wrapper pre {
+				margin-bottom: 0 !important;
 			}
 			.copy-button {
 				position: absolute;
@@ -79,8 +98,9 @@ const htmlContent = await marked.parse(markdownContent);
 				cursor: pointer;
 				opacity: 0;
 				transition: opacity 0.2s, background-color 0.2s;
+				z-index: 10;
 			}
-			.markdown-body pre:hover .copy-button {
+			.code-wrapper:hover .copy-button {
 				opacity: 1;
 			}
 			.copy-button:hover {
@@ -102,6 +122,14 @@ const htmlContent = await marked.parse(markdownContent);
 				const preBlocks = document.querySelectorAll('.markdown-body pre');
 				
 				preBlocks.forEach((pre) => {
+					// Create wrapper
+					const wrapper = document.createElement('div');
+					wrapper.className = 'code-wrapper';
+					
+					// Insert wrapper and move pre inside
+					pre.parentNode.insertBefore(wrapper, pre);
+					wrapper.appendChild(pre);
+					
 					// Create copy button
 					const button = document.createElement('button');
 					button.className = 'copy-button';
@@ -129,7 +157,7 @@ const htmlContent = await marked.parse(markdownContent);
 						}
 					});
 					
-					pre.appendChild(button);
+					wrapper.appendChild(button);
 				});
 			});
 		</script>

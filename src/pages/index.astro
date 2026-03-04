@@ -16,7 +16,8 @@ try {
       'Accept': 'text/plain, text/markdown, */*',
       'Cache-Control': 'no-cache'
     },
-    cache: 'no-store'
+    // @ts-ignore - CF Workers specific option to bypass edge cache
+    cf: { cacheTtl: 0, cacheEverything: false }
   });
   if (!response.ok) {
     throw new Error(`Failed to fetch markdown: ${response.status} ${response.statusText}`);
@@ -170,7 +171,7 @@ const htmlContent = await marked.parse(markdownContent);
 			document.addEventListener('DOMContentLoaded', () => {
 				const headings = document.querySelectorAll('.markdown-body h1, .markdown-body h2, .markdown-body h3');
 				headings.forEach((heading) => {
-					if (heading.textContent.trim().includes("Fitur Utama CloudStream")) {
+					if (heading.textContent.trim().includes("Fitur")) {
 					const level = parseInt(heading.tagName[1]);
 					let lastEl = heading;
 					let sibling = heading.nextElementSibling;

@@ -7,7 +7,7 @@ export default defineConfig({
     adapter: cloudflare(),
     vite: {
         define: {
-            'import.meta.env.MD_URL': JSON.stringify(process.env.MD_URL || 'https://assets-cdn.zvlz.my.id/cloudstream.md'),
+            'import.meta.env.MD_URL': JSON.stringify(process.env.MD_URL || 'https://cloudstream.zvlz.my.id/cloudstream.md'),
         }
     }
 });
